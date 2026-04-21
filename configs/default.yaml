@@ -1,0 +1,113 @@
+seed: 2025
+deterministic: false
+
+data:
+  image_size: 512
+  sequence_length: 64
+  histogram_equalization: true
+  normalize_to_minus_one_one: true
+  split:
+    protocol: environment_sequence
+    train_sequences_per_environment: 14
+    val_sequences_per_environment: 3
+    test_sequences_per_environment: 3
+    preserve_seasonal_coverage: true
+  augmentations:
+    train_only: true
+    rotation_degrees: [0, 90, 180, 270]
+    horizontal_flip_p: 0.5
+    vertical_flip_p: 0.5
+
+model:
+  image_size: 512
+  sequence_length: 64
+  latent_dim: 512
+  condition_dim: 512
+  class_dim: 8
+  environment_classes: 4
+  season_classes: 4
+  low_level_dim: 864
+  high_level_dim: 2048
+  fused_dim: 2912
+  activation_negative_slope: 0.2
+  resnet:
+    weights_path: null
+    allow_empty_weights: false
+    freeze: true
+    feature_batch_size: 2
+  low_level:
+    hsv_hist_bins: 32
+    lbp_bins: 256
+  generator:
+    mapping_layers: 8
+    style_dim: 512
+    start_resolution: 4
+    noise: true
+    channel_schedule:
+      4: 512
+      8: 512
+      16: 512
+      32: 512
+      64: 256
+      128: 128
+      256: 64
+      512: 32
+  discriminator:
+    channel_schedule:
+      512: 64
+      256: 128
+      128: 256
+      64: 512
+      32: 512
+      16: 512
+      8: 512
+      4: 512
+
+training:
+  objective: wgan_gp
+  epochs: 300
+  batch_size: 2
+  gradient_accumulation_steps: 2
+  effective_batch_size: 4
+  generator_lr: 0.0001
+  discriminator_lr: 0.0001
+  beta1: 0.0
+  beta2: 0.99
+  discriminator_steps: 1
+  gradient_penalty_weight: 10.0
+  lambda_env: 0.25
+  lambda_season: 0.25
+  log_every_epochs: 1
+  checkpoint_dir: checkpoints
+
+demo:
+  quick_image_size: 128
+  quick_sequence_length: 4
+  quick_generator_channels:
+    4: 64
+    8: 64
+    16: 32
+    32: 32
+    64: 16
+    128: 8
+  quick_discriminator_channels:
+    128: 16
+    64: 32
+    32: 64
+    16: 64
+    8: 64
+    4: 64
+
+rendering:
+  k: 5
+  minimum_unit_cm: 35.0
+  # Scale conversion used when no calibrated rendering scale is supplied.
+  cm_per_pixel: 1.0
+  n_init: 10
+  max_iter: 300
+  mean_filter_passes: 1
+  closing_kernel_size: 3
+  max_shape_iterations: 3
+  label_change_threshold: 0.005
+  a_min_factor: 0.25
+  random_seed: 2025
