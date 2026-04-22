@@ -58,6 +58,8 @@ Forward demo:
 python infer_demo.py --config configs/default.yaml --quick --output outputs/demo_sample.png
 ```
 
+The `--quick` forward command is intended for structural or demo validation only. Paper-aligned use requires user-provided permitted data, a local pretrained ResNet50 checkpoint, and, where applicable, local checkpoints consistent with the intended experiment setup.
+
 Rendering demo:
 
 ```bash
